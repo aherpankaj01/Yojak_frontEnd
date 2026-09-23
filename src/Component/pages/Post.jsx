@@ -5,6 +5,8 @@ import fileService from "../../services/fileService";
 import { Button, Container } from "../../Component";
 import parse, { domToReact } from "html-react-parser";
 import { useSelector } from "react-redux";
+import CommentSection from "../CommentSection";
+import LikeButton from "../LikeButton";
 
 const parseOptions = {
   replace(domNode) {
@@ -206,6 +208,10 @@ export default function Post() {
               : null}
           </div>
         </div>
+         <div className="max-w-3xl mx-auto mb-6">
+                  <LikeButton postSlug={post.slug} />
+                </div>
+                <CommentSection postSlug={post.slug} />
       </Container>
     </div>
   ) : null;

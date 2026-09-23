@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const authStatus = useSelector((state) => state.auth.status);
+  const userData = useSelector((state) => state.auth.userData);
   const navigate = useNavigate();
 
   const navItems = [
@@ -14,6 +15,7 @@ const Header = () => {
     { name: "Signup", slug: "/signup", active: !authStatus },
     { name: "All Posts", slug: "/all-posts", active: authStatus },
     { name: "Add Post", slug: "/add-post", active: authStatus },
+    { name: "Profile", slug: userData ? `/profile/${userData.$id}` : "/", active: authStatus },
   ];
 
   return (

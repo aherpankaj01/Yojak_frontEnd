@@ -45,16 +45,16 @@ export class PostService {
         }
     }
 
-    async getPosts(status = "active") {
-        try {
-            const response = await apiClient.get(`/posts?status=${status}`);
-            const documents = response.data.map(this.toAppwriteShape);
-            return { documents }; // matches Appwrite's listDocuments() shape
-        } catch (error) {
-            console.log("Post service :: getPosts :: error", error);
-            return false;
+    async getPosts(status = "active", sortBy = "recent") {
+            try {
+           const response = await apiClient.get(`/posts?status=${status}&sortBy=${sortBy}`);
+                const documents = response.data.map(this.toAppwriteShape);
+                return { documents };
+            } catch (error) {
+                console.log("Post service :: getPosts :: error", error);
+                return false;
+            }
         }
-    }
 
     // Adds $id (mapped from slug) so PostForm.jsx, Post.jsx, PostCard.jsx work unchanged
     toAppwriteShape(post) {
