@@ -15,7 +15,7 @@ const Header = () => {
     { name: "Signup", slug: "/signup", active: !authStatus },
     { name: "All Posts", slug: "/all-posts", active: authStatus },
     { name: "Add Post", slug: "/add-post", active: authStatus },
-    { name: "Profile", slug: userData ? `/profile/${userData.$id}` : "/", active: authStatus },
+    { name: "My Profile", slug: userData ? `/profile/${userData.$id}` : "/", active: authStatus },
   ];
 
   return (
