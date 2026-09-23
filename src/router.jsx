@@ -15,7 +15,6 @@ const EditProfile = lazy(() => import("./Component/pages/EditProfile.jsx"));
 const AuthLayout = lazy(() => import("./Component/AuthLayout.jsx"));
 const Login = lazy(() => import("./Component/Login.jsx"));
 
-// Wrapper (no repetition)
 const withSuspense = (Component) => (
   <Suspense fallback={<div>Loading...</div>}>
     <Component />

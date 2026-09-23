@@ -19,15 +19,14 @@ export class AuthService {
         try {
             const response = await apiClient.get("/auth/me");
             const { userId, name, email } = response.data;
-            return { $id: userId, name, email }; // $id matches Appwrite's naming, used by App.jsx and Post.jsx
+            return { $id: userId, name, email };
         } catch (error) {
-            return null; // no session — matches Appwrite's behavior
+            return null;
         }
     }
 
     async logout() {
         localStorage.removeItem("yojak_token");
-        // No server call needed — JWT is stateless, no session to invalidate
     }
 }
 

@@ -23,7 +23,7 @@ export default function LikeButton({ postSlug }) {
     };
 
     const handleToggle = async () => {
-        if (!userData) return; // logged-out users can't click (button is disabled/hidden below)
+        if (!userData) return;
         if (busy) return;
 
         setBusy(true);

@@ -56,7 +56,6 @@ export class PostService {
             }
         }
 
-    // Adds $id (mapped from slug) so PostForm.jsx, Post.jsx, PostCard.jsx work unchanged
     toAppwriteShape(post) {
         return { ...post, $id: post.slug };
     }

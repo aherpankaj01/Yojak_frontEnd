@@ -7,7 +7,6 @@ const apiClient = axios.create({
     },
 });
 
-// Attach the JWT to every outgoing request, if one exists
 apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem("yojak_token");
     if (token) {
