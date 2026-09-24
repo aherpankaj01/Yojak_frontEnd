@@ -1,109 +1,312 @@
-# 🚀 Yojak Blog Application (React + Appwrite)
+# ✍️ Yojak — Blogging Platform Frontend
 
-A modern, full-stack blog platform built with **React** and **Appwrite**, enabling users to create, manage, and explore content with a seamless and responsive experience.
+A modern and responsive blogging platform frontend built with **React.js**, designed to provide users with a smooth experience for creating, managing, discovering, and interacting with blog content.
 
----
+The frontend communicates with a dedicated **Spring Boot REST API backend** for authentication, posts, comments, likes, user profiles, and image management.
+
+## 🌐 Live Application
+
+🚀 **Frontend:**
+https://yojak-front-end.vercel.app/
+
+🔗 **Backend Repository:**
+Add your backend GitHub repository URL here.
 
 ## ✨ Features
 
-- 🔐 Secure Authentication (Login / Signup)
-- 📝 Create, Edit & Delete Posts (CRUD)
-- 🖼️ Image Upload via Appwrite Storage
-- 🧠 Rich Text Editor for content creation
-- 🔍 Dynamic Routing with React Router
-- 🛡️ Protected Routes (Author-only access)
-- 📱 Fully Responsive UI (Mobile + Desktop)
-- ⚡ Fast, scalable architecture
-
----
+* 🔐 User Registration and Login
+* 🛡️ Protected Routes
+* 📝 Create, Edit and Delete Blog Posts
+* 📖 View and Read Blog Posts
+* ❤️ Like Posts
+* 💬 Comment on Posts
+* 👤 User Profiles
+* ✏️ Edit User Profile
+* 🖼️ Image Upload and Preview
+* 🔍 Post Filtering
+* 📰 Most Recent Posts
+* ❤️ Most Liked Posts
+* 💬 Most Commented Posts
+* 📝 Rich Text Blog Editor
+* 📱 Responsive Design
+* ⚡ Global State Management with Redux Toolkit
+* 🔗 REST API Integration
+* 🚪 Secure Logout
 
 ## 🛠️ Tech Stack
 
-| Category       | Technology                 |
-| -------------- | -------------------------- |
-| Frontend       | React, Redux Toolkit       |
-| Routing        | React Router DOM           |
-| Backend (BaaS) | Appwrite                   |
-| Styling        | Tailwind CSS               |
-| Editor         | TinyMCE / Rich Text Editor |
-| State Mgmt     | Redux                      |
+### Frontend
 
----
+* React.js
+* JavaScript
+* Redux Toolkit
+* React Router
+* React Hook Form
+* Axios
+* Tailwind CSS
+* HTML5
+* CSS3
+* TinyMCE
+
+### Backend Integration
+
+* Java
+* Spring Boot
+* Spring Security
+* JWT Authentication
+* REST APIs
+* PostgreSQL
+* JPA / Hibernate
+* Flyway
+
+### Tools
+
+* Git
+* GitHub
+* Vite
+* Postman
+* Vercel
+
+## 🏗️ Application Architecture
+
+                ┌───────────────────────┐
+                │         User          │
+                └───────────┬───────────┘
+                            │
+                            ▼
+                ┌───────────────────────┐
+                │    React Frontend     │
+                │                       │
+                │ React + Redux Toolkit │
+                │ React Router          │
+                │ Tailwind CSS          │
+                └───────────┬───────────┘
+                            │
+                         REST API
+                            │
+                            ▼
+                ┌───────────────────────┐
+                │    Spring Boot API    │
+                │                       │
+                │ Spring Security       │
+                │ JWT Authentication    │
+                │ JPA / Hibernate       │
+                └───────────┬───────────┘
+                            │
+                ┌───────────┴───────────┐
+                ▼                       ▼
+       ┌────────────────┐       ┌────────────────┐
+       │   PostgreSQL   │       │   Cloudinary    │
+       │    Database    │       │ Image Storage   │
+       └────────────────┘       └────────────────┘
+```
 
 ## 📂 Project Structure
 
+```text
 src/
-├── appwrite/ # Appwrite services & config
-├── components/ # Reusable UI components
-├── pages/ # Pages (Home, Post, Auth)
-├── store/ # Redux store
-├── utils/ # Helper functions
+│
+├── Component/
+│   ├── AuthLayout.jsx
+│   ├── Button.jsx
+│   ├── CommentSection.jsx
+│   ├── Input.jsx
+│   ├── LikeButton.jsx
+│   ├── Login.jsx
+│   ├── Logo.jsx
+│   ├── PostCard.jsx
+│   ├── RTE.jsx
+│   ├── Select.jsx
+│   └── Signup.jsx
+│
+├── Component/pages/
+│   ├── AddPost.jsx
+│   ├── AllPost.jsx
+│   ├── EditPost.jsx
+│   ├── EditProfile.jsx
+│   ├── Home.jsx
+│   ├── Login.jsx
+│   ├── Post.jsx
+│   ├── Profile.jsx
+│   └── Signup.jsx
+│
+├── Component/post-form/
+│   └── PostForm.jsx
+│
+├── Component/Header/
+│   ├── Header.jsx
+│   └── LogOutBtn.jsx
+│
+├── Component/Footer/
+│   └── Footer.jsx
+│
+├── services/
+│   ├── apiClient.js
+│   ├── authService.js
+│   ├── commentService.js
+│   ├── fileService.js
+│   ├── likeService.js
+│   ├── postService.js
+│   └── userService.js
+│
+├── store/
+│   ├── authSlice.js
+│   └── store.js
+│
 ├── App.jsx
-└── main.jsx
+├── App.css
+├── main.jsx
+└── router.jsx
+```
 
----
+## 🔄 Frontend Data Flow
 
-## ⚙️ Getting Started
+```text
+User Action
+     │
+     ▼
+React Component
+     │
+     ▼
+Service Layer
+     │
+     ▼
+Axios API Request
+     │
+     ▼
+Spring Boot REST API
+     │
+     ▼
+PostgreSQL / Cloudinary
+     │
+     ▼
+API Response
+     │
+     ▼
+Redux / Component State
+     │
+     ▼
+Updated UI
+```
 
-### 1️⃣ Clone the Repository
+## 🔐 Authentication Flow
 
-git clone https://github.com/your-username/blog-app.git
+Yojak uses JWT-based authentication through the Spring Boot backend.
 
-cd blog-app
+```text
+User Login
+    ↓
+React Login Form
+    ↓
+POST /auth/login
+    ↓
+Spring Security
+    ↓
+Credentials Validation
+    ↓
+JWT Generated
+    ↓
+Frontend Stores Authentication State
+    ↓
+JWT Sent with Protected Requests
+    ↓
+JwtFilter Validates Token
+    ↓
+Authorized Request
+```
 
-### 2️⃣ Install Dependencies
+## 🚀 Getting Started
 
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/aherpankaj01/Yojak_Frontend.git
+```
+
+```bash
+cd Yojak_Frontend
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
+```
 
-### 3️⃣ Environment Setup
+### 3. Configure Backend URL
 
-Create a `.env` file in the root:
+Configure the Spring Boot backend API URL in the frontend according to your environment.
 
-VITE_APPWRITE_URL=your_appwrite_url
-VITE_APPWRITE_PROJECT_ID=your_project_id
-VITE_APPWRITE_DATABASE_ID=your_database_id
-VITE_APPWRITE_COLLECTION_ID=your_collection_id
-VITE_APPWRITE_BUCKET_ID=your_bucket_id
+Local backend:
 
-### 4️⃣ Run the App
+```text
+http://localhost:8082
+```
 
+Deployed backend:
+
+```text
+Your deployed Spring Boot backend URL
+```
+
+### 4. Start Development Server
+
+```bash
 npm run dev
+```
 
----
+The application will normally be available at:
 
-## 🔑 Appwrite Configuration
+```text
+http://localhost:5173
+```
 
-Ensure the following are set up:
+### 5. Build for Production
 
-- ✅ Database & Collection (posts)
-- ✅ Storage Bucket (images)
-- ✅ Authentication enabled
-- ✅ Required permissions/scopes configured
+```bash
+npm run build
+```
 
----
+### 6. Preview Production Build
 
-## 📸 Key Highlights
+```bash
+npm run preview
+```
 
-- 📌 Clean UI with modern design
-- 📌 Author-based access control
-- 📌 Image preview & fallback handling
-- 📌 Optimized component structure
-- 📌 Scalable backend using Appwrite
+## 🚀 Deployment
 
----
+The frontend is deployed using **Vercel**.
 
-## 🚀 Future Enhancements
+```text
+React + Vite
+      ↓
+GitHub
+      ↓
+Vercel
+      ↓
+Production Application
+```
 
-- 💬 Comments & discussions
-- ❤️ Like / Bookmark system
-- 🔍 Search & filters
-- 🌙 Dark/Light mode
-- 📊 Admin dashboard
+## 🎯 Key Highlights
 
----
+* Component-based React architecture
+* Centralized API service layer
+* Redux Toolkit for authentication state
+* Protected application routes
+* REST API integration
+* Responsive UI
+* Rich text content creation
+* Image upload functionality
+* User interaction through likes and comments
+* Separate frontend and backend architecture
 
 ## 👨‍💻 Author
 
 **Pankaj Aher**
 
----
+Computer Engineering Graduate
+Java Full-Stack Developer
+
+GitHub: https://github.com/aherpankaj01
+
+Portfolio: https://aher-pankaj.vercel.app/
