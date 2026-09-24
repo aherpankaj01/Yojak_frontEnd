@@ -15,8 +15,15 @@ const EditProfile = lazy(() => import("./Component/pages/EditProfile.jsx"));
 const AuthLayout = lazy(() => import("./Component/AuthLayout.jsx"));
 const Login = lazy(() => import("./Component/Login.jsx"));
 
+
+const LoadingFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+    <p className="animate-pulse text-lg">Loading...</p>
+  </div>
+);
+
 const withSuspense = (Component) => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense fallback={<LoadingFallback />}>
     <Component />
   </Suspense>
 );
@@ -31,7 +38,7 @@ export const router = createBrowserRouter([
       {
         path: "/login",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingFallback />}>
             <AuthLayout authentication={false}>
               <Login />
             </AuthLayout>
@@ -42,7 +49,7 @@ export const router = createBrowserRouter([
       {
         path: "/signup",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingFallback />}>
             <AuthLayout authentication={false}>
               <Signup />
             </AuthLayout>
@@ -53,7 +60,7 @@ export const router = createBrowserRouter([
       {
         path: "/all-posts",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingFallback />}>
             <AuthLayout authentication>
               <AllPost />
             </AuthLayout>
@@ -64,7 +71,7 @@ export const router = createBrowserRouter([
       {
         path: "/add-post",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingFallback />}>
             <AuthLayout authentication>
               <AddPost />
             </AuthLayout>
@@ -75,7 +82,7 @@ export const router = createBrowserRouter([
       {
         path: "/edit-post/:slug",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingFallback />}>
             <AuthLayout authentication>
               <EditPost />
             </AuthLayout>
@@ -91,7 +98,7 @@ export const router = createBrowserRouter([
       {
         path: "/edit-profile",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<LoadingFallback />}>
             <AuthLayout authentication>
               <EditProfile />
             </AuthLayout>
