@@ -1,10 +1,27 @@
-import React, { useCallback } from "react";
+import React, { useCallback, Suspense, lazy } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Input, RTE, Select } from "..";
+import { Button, Input, Select } from "..";
 import postService from "../../services/postService";
 import fileService from "../../services/fileService";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+
+const RTE = lazy(() => import("../RTE"));
+
+function EditorFallback() {
+  return (
+    <div className="w-full flex flex-col gap-2 sm:gap-3">
+      <label className="text-xs sm:text-sm font-medium text-gray-300">
+        Content :
+      </label>
+      <div className="rounded-lg sm:rounded-xl border border-white/20 bg-white/10 backdrop-blur-md shadow-lg h-[300px] sm:h-[400px] flex items-center justify-center">
+        <p className="text-gray-400 text-sm animate-pulse">
+          Loading editor...
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function PostForm({ post }) {
   const { register, handleSubmit, watch, setValue, control, getValues } =
@@ -100,12 +117,14 @@ export default function PostForm({ post }) {
             });
           }}
         />
-        <RTE
-          label="Content :"
-          name="content"
-          control={control}
-          defaultValue={getValues("content")}
-        />
+        <Suspense fallback={<EditorFallback />}>
+          <RTE
+            label="Content :"
+            name="content"
+            control={control}
+            defaultValue={getValues("content")}
+          />
+        </Suspense>
       </div>
       <div className="w-1/3 px-2">
         <Input
