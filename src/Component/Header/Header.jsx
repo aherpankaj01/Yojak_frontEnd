@@ -19,7 +19,15 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-lg bg-white/10 border-b border-white/20 shadow-lg">
+    <header
+      className="sticky top-0 z-50 backdrop-blur-lg bg-white/10 border-b border-white/20 shadow-lg"
+      style={{
+        transform: "translateZ(0)",
+        WebkitTransform: "translateZ(0)",
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+      }}
+    >
       <Container>
         <nav className="flex flex-col sm:flex-row items-center justify-between py-4 sm:py-5 gap-4 sm:gap-0">
           <Link to="/" className="flex items-center gap-2 sm:gap-3">
