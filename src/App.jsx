@@ -8,7 +8,6 @@ import Footer from "./Component/Footer/Footer";
 import { Outlet } from "react-router-dom";
 
 function App() {
-  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,19 +25,8 @@ function App() {
         } else {
           dispatch(logout());
         }
-      })
-      .finally(() => setLoading(false));
+      });
   }, [dispatch]);
-
-  if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gray-900 text-white px-4">
-        <p className="text-base sm:text-lg md:text-xl animate-pulse text-center">
-          Loading...
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
@@ -52,5 +40,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

@@ -5,6 +5,8 @@ import postService from "../../services/postService";
 import fileService from "../../services/fileService";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { clearCache } from "../../utils/simpleCache";
+
 
 const RTE = lazy(() => import("../RTE"));
 
@@ -54,6 +56,8 @@ export default function PostForm({ post }) {
                 });
 
       if (dbPost) {
+        clearCache("home-posts-");
+        clearCache("profile-posts-");
         navigate(`/post/${dbPost.$id}`);
       }
     } else {
@@ -68,6 +72,8 @@ export default function PostForm({ post }) {
         });
 
         if (dbPost) {
+          clearCache("home-posts-");
+          clearCache("profile-posts-");
           navigate(`/post/${dbPost.$id}`);
         }
       }

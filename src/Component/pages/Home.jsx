@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import postService from "../../services/postService";
 import { Container, PostCard } from "../../Component";
+import { getCached, setCached } from "../../utils/simpleCache";
 
 const FILTERS = [
     { key: "recent", label: "Most Recent" },
@@ -14,13 +15,47 @@ function Home() {
     const [activeFilter, setActiveFilter] = useState("recent");
 
     useEffect(() => {
+        let cancelled = false;
+        const cacheKey = `home-posts-active-${activeFilter}`;
+        const cached = getCached(cacheKey);
+
+        if (cached) {
+
+            setPosts(cached.data);
+            setLoading(false);
+
+            if (cached.isExpired) {
+                postService.getPosts("active", activeFilter).then((res) => {
+                    if (!cancelled && res) {
+                        setPosts(res.documents);
+                        setCached(cacheKey, res.documents);
+                    }
+                });
+            }
+
+            return () => {
+                cancelled = true;
+            };
+        }
+
+
         setLoading(true);
         postService
             .getPosts("active", activeFilter)
             .then((res) => {
-                if (res) setPosts(res.documents);
+                if (cancelled) return;
+                if (res) {
+                    setPosts(res.documents);
+                    setCached(cacheKey, res.documents);
+                }
             })
-            .finally(() => setLoading(false));
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, [activeFilter]);
 
     return (

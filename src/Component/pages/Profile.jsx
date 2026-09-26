@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import userService from "../../services/userService";
 import fileService from "../../services/fileService";
 import { Container, PostCard } from "../../Component";
+import { getCached, setCached } from "../../utils/simpleCache";
 
 const FILTERS = [
     { key: "recent", label: "Most Recent" },
@@ -29,11 +30,39 @@ export default function Profile() {
     }, [userId]);
 
     useEffect(() => {
+        let cancelled = false;
+        const cacheKey = `profile-posts-${userId}-${activeFilter}`;
+        const cached = getCached(cacheKey);
+
+        if (cached) {
+            setPosts(cached.data);
+            setLoading(false);
+
+            if (cached.isExpired) {
+                userService.getPostsByUser(userId, activeFilter).then((data) => {
+                    if (!cancelled) {
+                        setPosts(data);
+                        setCached(cacheKey, data);
+                    }
+                });
+            }
+
+            return () => {
+                cancelled = true;
+            };
+        }
+
         setLoading(true);
         userService.getPostsByUser(userId, activeFilter).then((data) => {
+            if (cancelled) return;
             setPosts(data);
+            setCached(cacheKey, data);
             setLoading(false);
         });
+
+        return () => {
+            cancelled = true;
+        };
     }, [userId, activeFilter]);
 
     if (!profile) {
@@ -45,7 +74,7 @@ export default function Profile() {
     }
 
     const avatarUrl = profile.avatar
-        ? fileService.getFilePreview(profile.avatar)
+        ? fileService.getFilePreview(profile.avatar, "avatar")
         : "https://ui-avatars.com/api/?name=" + encodeURIComponent(profile.name);
 
     return (

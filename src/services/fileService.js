@@ -27,13 +27,25 @@ export class FileService {
         }
     }
 
-    getFilePreview(fileId) {
+
+    getFilePreview(fileId, size = "thumb") {
         const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-        return `https://res.cloudinary.com/${cloudName}/image/upload/${fileId}`;
+
+        const transforms = {
+
+            thumb: "w_400,h_300,c_fill,q_auto,f_auto",
+            banner: "w_1200,h_600,c_fill,q_auto,f_auto",
+            avatar: "w_150,h_150,c_fill,q_auto,f_auto",
+            full: "q_auto,f_auto",
+        };
+
+        const transform = transforms[size] || transforms.thumb;
+
+        return `https://res.cloudinary.com/${cloudName}/image/upload/${transform}/${fileId}`;
     }
 
     getFileView(fileId) {
-        return this.getFilePreview(fileId);
+        return this.getFilePreview(fileId, "banner");
     }
 }
 

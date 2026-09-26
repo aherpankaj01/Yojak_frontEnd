@@ -7,6 +7,7 @@ import parse, { domToReact } from "html-react-parser";
 import { useSelector } from "react-redux";
 import CommentSection from "../CommentSection";
 import LikeButton from "../LikeButton";
+import { clearCache } from "../../utils/simpleCache";
 
 const parseOptions = {
   replace(domNode) {
@@ -57,10 +58,11 @@ const parseOptions = {
             {children}
           </u>
         );
-      case "a":
+      case "a": {
+        const href = domNode.attribs ? domNode.attribs.href : undefined;
         return (
           <a
-            href={domNode.attribs?.href}
+            href={href}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors"
@@ -68,6 +70,7 @@ const parseOptions = {
             {children}
           </a>
         );
+      }
       case "ul":
         return (
           <ul className="list-disc list-outside pl-6 mb-5 space-y-2 text-gray-300">
@@ -104,14 +107,17 @@ const parseOptions = {
             {children}
           </pre>
         );
-      case "img":
+      case "img": {
+        const src = domNode.attribs ? domNode.attribs.src : undefined;
+        const alt = (domNode.attribs && domNode.attribs.alt) || "";
         return (
           <img
-            src={domNode.attribs?.src}
-            alt={domNode.attribs?.alt || ""}
+            src={src}
+            alt={alt}
             className="rounded-xl w-full my-6 shadow-lg"
           />
         );
+      }
       case "hr":
         return <hr className="border-white/10 my-8" />;
       case "br":
@@ -153,6 +159,8 @@ export default function Post() {
     const status = await postService.deletePost(post.$id);
     if (status) {
       await fileService.deleteFile(post.featuredImage);
+      clearCache("home-posts-");
+      clearCache("profile-posts-");
       navigate("/");
     }
   };
