@@ -50,10 +50,9 @@ export default function PostForm({ post }) {
           }
 
           const dbPost = await postService.updatePost(post.$id, {
-                  ...data,
-              featuredImage: file ? file.$id : undefined,
-              featuredImage: file ? file.$id : post.featuredImage,
-                });
+            ...data,
+            featuredImage: file ? file.$id : post.featuredImage
+          });
 
       if (dbPost) {
         clearCache("home-posts-");
