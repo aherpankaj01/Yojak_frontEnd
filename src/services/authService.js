@@ -2,14 +2,22 @@ import apiClient from "./apiClient";
 
 export class AuthService {
     async createAccount({ name, email, password }) {
-        const response = await apiClient.post("/auth/signup", { name, email, password });
+        const response = await apiClient.post(
+            "/auth/signup",
+            { name, email, password },
+            { silent: true }
+        );
         const { token, userId, name: userName, email: userEmail } = response.data;
         localStorage.setItem("yojak_token", token);
         return { userId, name: userName, email: userEmail };
     }
 
     async login({ email, password }) {
-        const response = await apiClient.post("/auth/login", { email, password });
+        const response = await apiClient.post(
+            "/auth/login",
+            { email, password },
+            { silent: true }
+        );
         const { token, userId, name, email: userEmail } = response.data;
         localStorage.setItem("yojak_token", token);
         return { userId, name, email: userEmail };
@@ -17,7 +25,7 @@ export class AuthService {
 
     async getCurrentUser() {
         try {
-            const response = await apiClient.get("/auth/me");
+            const response = await apiClient.get("/auth/me", { silent: true });
             const { userId, name, email } = response.data;
             return { $id: userId, name, email };
         } catch (error) {

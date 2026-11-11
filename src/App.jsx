@@ -6,6 +6,7 @@ import "./App.css";
 import Header from "./Component/Header/Header";
 import Footer from "./Component/Footer/Footer";
 import { Outlet } from "react-router-dom";
+import Toaster from "./Component/Toaster";
 
 function App() {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+        <Toaster />
       <Header />
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-3 sm:px-5 md:px-8 lg:px-12 py-4 sm:py-6">

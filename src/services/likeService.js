@@ -1,5 +1,6 @@
 import apiClient from "./apiClient";
 
+
 export class LikeService {
     async likePost(postSlug) {
         try {
@@ -23,7 +24,7 @@ export class LikeService {
 
     async getStatus(postSlug) {
         try {
-            const response = await apiClient.get(`/posts/${postSlug}/likes`);
+            const response = await apiClient.get(`/posts/${postSlug}/likes`, { silent: true });
             return response.data;
         } catch (error) {
             console.log("Like service :: getStatus :: error", error);
