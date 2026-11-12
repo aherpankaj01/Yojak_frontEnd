@@ -15,6 +15,7 @@ const EditProfile = lazy(() => import("./Component/pages/EditProfile.jsx"));
 
 const AuthLayout = lazy(() => import("./Component/AuthLayout.jsx"));
 const Login = lazy(() => import("./Component/Login.jsx"));
+const Search = lazy(() => import("./Component/pages/Search.jsx"));
 
 const LoadingFallback = () => (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
@@ -55,6 +56,7 @@ export const router = createBrowserRouter([
                     </Suspense>
                 ),
             },
+            { path: "/search", element: withSuspense(Search) },
             {
                 path: "/all-posts",
                 element: (

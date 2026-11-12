@@ -3,6 +3,7 @@ import Logo from "../Logo";
 import LogoutBtn from "./LogOutBtn";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import SearchBar from "../SearchBar";
 
 const Header = () => {
   const authStatus = useSelector((state) => state.auth.status);
@@ -36,7 +37,7 @@ const Header = () => {
               Yojak
             </span>
           </Link>
-
+          <SearchBar />
           <ul className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 md:gap-6">
             {navItems.map(
               (item) =>
