@@ -34,7 +34,7 @@ const Header = () => {
           }}
       >
         <div className="w-full px-4 sm:px-5 lg:px-6">
-          <nav className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between lg:gap-5">
+          <nav className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:gap-44">
 
             <Link
                 to="/"
@@ -46,18 +46,18 @@ const Header = () => {
                         </span>
             </Link>
 
-            <div className="w-full lg:w-auto lg:flex-1 lg:max-w-[280px]">
+            <div className="w-full lg:ml-6 lg:mr-auto lg:w-[30rem] lg:shrink-0">
               <SearchBar />
             </div>
 
-            <ul className="flex flex-wrap items-center justify-center gap-1 sm:gap-2 lg:justify-end">
+            <ul className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 lg:ml-0 lg:shrink-0 lg:justify-end lg:-translate-x-4">
               {navItems.map(
                   (item) =>
                       item.active && (
                           <li key={item.name}>
                             <button
                                 onClick={() => navigate(item.slug)}
-                                className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-500 hover:shadow-lg"
+                                className="whitespace-nowrap rounded-full px-4 xl:px-5 py-2.5 text-sm lg:text-base font-semibold text-white transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-500 hover:shadow-lg"
                             >
                               {item.name}
                             </button>
