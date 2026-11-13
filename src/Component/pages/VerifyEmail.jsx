@@ -93,6 +93,10 @@ export default function VerifyEmail() {
                     We sent a 6-digit code to <span className="font-semibold">{email}</span>
                 </p>
 
+                <p className="text-center text-xs text-gray-400 mb-5">
+                    Didn't receive the email? Please check your spam or junk folder.
+                </p>
+
                 {error && (
                     <p className="text-red-400 text-center text-sm mb-4 bg-red-500/10 py-2 rounded-lg">
                         {error}
