@@ -265,10 +265,7 @@ className="w-12 h-12 rounded-full object-cover border-2 border-white/10 hover:bo
 
 <div className="flex items-center gap-3 shrink-0">
   {!isAuthor && (
-      <FollowButton
-          userId={post.userId}
-          isOwnProfile={false}
-      />
+      <FollowButton userId={post.userId} isOwnProfile={false} showCounts={false} />
   )}
 
   {isAuthor && (
