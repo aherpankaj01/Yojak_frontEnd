@@ -16,6 +16,9 @@ const VerifyEmail = lazy(() => import("./Component/pages/VerifyEmail.jsx"));
 const AuthLayout = lazy(() => import("./Component/AuthLayout.jsx"));
 const Login = lazy(() => import("./Component/Login.jsx"));
 const Search = lazy(() => import("./Component/pages/Search.jsx"));
+const ForgotPassword = lazy(() => import("./Component/pages/ForgotPassword.jsx"));
+const ResetPassword = lazy(() => import("./Component/pages/ResetPassword.jsx"));
+
 
 const LoadingFallback = () => (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
@@ -56,6 +59,8 @@ export const router = createBrowserRouter([
                     </Suspense>
                 ),
             },
+            { path: "/forgot-password", element: withSuspense(ForgotPassword) },
+            { path: "/reset-password", element: withSuspense(ResetPassword) },
             { path: "/search", element: withSuspense(Search) },
             {
                 path: "/verify-email",

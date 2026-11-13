@@ -51,6 +51,20 @@ export class AuthService {
         }
     }
 
+    async forgotPassword(email) {
+        const response = await apiClient.post("/auth/forgot-password", { email }, { silent: true });
+        return response.data;
+    }
+
+    async resetPassword({ token, newPassword, confirmPassword }) {
+        const response = await apiClient.post(
+            "/auth/reset-password",
+            { token, newPassword, confirmPassword },
+            { silent: true }
+        );
+        return response.data;
+    }
+
     async logout() {
         localStorage.removeItem("yojak_token");
     }
