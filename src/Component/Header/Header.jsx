@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Logo from "../Logo";
 import LogoutBtn from "./LogOutBtn";
 import SearchBar from "../SearchBar";
+import NotificationBell from "../NotificationBell";
 
 const Header = () => {
     const authStatus = useSelector((state) => state.auth.status);
@@ -126,7 +127,9 @@ const Header = () => {
 
                         {authStatus ? (
                             <>
-
+                                <li>
+                                    <NotificationBell />
+                                </li>
                                 <li className="relative">
                                     <button
                                         type="button"

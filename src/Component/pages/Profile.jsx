@@ -6,6 +6,7 @@ import fileService from "../../services/fileService";
 import { Container, PostCard } from "../../Component";
 import { getCached, setCached } from "../../utils/simpleCache";
 import SavedPostsList from "../SavedPostsList";
+import FollowButton from "../FollowButton";
 
 const FILTERS = [
     { key: "recent", label: "Most Recent" },
@@ -96,6 +97,7 @@ export default function Profile() {
                     {profile.bio && (
                         <p className="text-gray-400 mt-2 max-w-md">{profile.bio}</p>
                     )}
+                    <FollowButton userId={userId} isOwnProfile={!!isOwnProfile} />
                     {isOwnProfile && (
                         <a href="/edit-profile" className="mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition">
                             Edit Profile

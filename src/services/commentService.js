@@ -1,9 +1,9 @@
 import apiClient from "./apiClient";
 
 export class CommentService {
-    async addComment(postSlug, content) {
+    async addComment(postSlug, content, parentId = null) {
         try {
-            const response = await apiClient.post(`/posts/${postSlug}/comments`, { content });
+            const response = await apiClient.post(`/posts/${postSlug}/comments`, { content, parentId });
             return response.data;
         } catch (error) {
             console.log("Comment service :: addComment :: error", error);
