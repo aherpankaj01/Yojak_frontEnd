@@ -1,6 +1,10 @@
+
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import authService from "../../services/authService";
+import Input from "../Input";
+import Logo from "../Logo";
+import Button from "../Button";
 
 export default function ResetPassword() {
     const [params] = useSearchParams();
@@ -21,14 +25,21 @@ export default function ResetPassword() {
             setError("Password must be at least 8 characters.");
             return;
         }
+
         if (newPassword !== confirmPassword) {
             setError("Passwords do not match.");
             return;
         }
 
         setBusy(true);
+
         try {
-            await authService.resetPassword({ token, newPassword, confirmPassword });
+            await authService.resetPassword({
+                token,
+                newPassword,
+                confirmPassword,
+            });
+
             setDone(true);
             setTimeout(() => navigate("/login"), 2500);
         } catch (err) {
@@ -38,68 +49,97 @@ export default function ResetPassword() {
         }
     };
 
-    const fieldClass =
-        "w-full bg-white/20 text-white rounded-lg px-4 py-2.5 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500";
-
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
-            <div className="w-full max-w-md backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl p-6 sm:p-8 text-white">
-                <h2 className="text-2xl font-bold text-center mb-6">Choose a new password</h2>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 py-10">
+            <div className="w-full max-w-md">
+                <div className="backdrop-blur-lg bg-white/10 border border-white/10 shadow-2xl rounded-2xl p-6 sm:p-8 text-white">
 
-                {!token ? (
-                    <div className="text-center">
-                        <p className="text-red-400 text-sm mb-4">
-                            This reset link is missing its token. Please use the link from your email, or request a new one.
+                    <div className="flex flex-col items-center mb-7">
+                        <div className="p-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full shadow-lg flex items-center justify-center mb-5">
+                            <Logo width="55px" />
+                        </div>
+
+                        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">
+                            Choose a New Password
+                        </h2>
+
+                        <p className="text-center text-gray-300 text-sm">
+                            Create a strong password for your account.
                         </p>
-                        <Link to="/forgot-password" className="text-indigo-300 hover:text-indigo-200 text-sm">
-                            Request a new link
-                        </Link>
                     </div>
-                ) : done ? (
-                    <p className="text-green-400 text-center text-sm bg-green-500/10 py-3 rounded-lg">
-                        Your password has been updated. Taking you to sign in...
-                    </p>
-                ) : (
-                    <>
-                        {error && (
-                            <p className="text-red-400 text-center text-sm mb-4 bg-red-500/10 py-2 rounded-lg">
-                                {error}
+
+                    {!token ? (
+                        <div className="text-center">
+                            <p className="text-red-400 text-sm mb-5 bg-red-500/10 py-3 px-4 rounded-lg">
+                                This reset link is missing its token. Please use the link from your email, or request a new one.
                             </p>
-                        )}
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <input
-                                type="password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                placeholder="New password"
-                                autoComplete="new-password"
-                                className={fieldClass}
-                            />
-                            <input
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="Confirm new password"
-                                autoComplete="new-password"
-                                className={fieldClass}
-                            />
-                            <button
-                                type="submit"
-                                disabled={busy}
-                                className="w-full py-2.5 rounded-lg font-semibold bg-gradient-to-r from-purple-500 to-indigo-500 disabled:opacity-50"
+                            <Link
+                                to="/forgot-password"
+                                className="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors"
                             >
-                                {busy ? "Saving..." : "Update password"}
-                            </button>
-                        </form>
-
-                        <div className="text-center mt-5 text-sm">
-                            <Link to="/forgot-password" className="text-gray-400 hover:text-gray-200">
                                 Request a new link
                             </Link>
                         </div>
-                    </>
-                )}
+                    ) : done ? (
+                        <div className="text-center">
+                            <p className="text-green-400 text-sm bg-green-500/10 border border-green-500/20 py-3 px-4 rounded-lg">
+                                Your password has been updated successfully. Redirecting you to sign in...
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            {error && (
+                                <p className="text-red-400 text-center text-sm mb-5 bg-red-500/10 border border-red-500/20 py-3 px-4 rounded-lg">
+                                    {error}
+                                </p>
+                            )}
+
+                            <form onSubmit={handleSubmit} className="space-y-5">
+
+                                <Input
+                                    label="New Password"
+                                    type="password"
+                                    placeholder="Enter your new password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    autoComplete="new-password"
+                                    required
+                                />
+
+                                <Input
+                                    label="Confirm New Password"
+                                    type="password"
+                                    placeholder="Confirm your new password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    autoComplete="new-password"
+                                    required
+                                />
+
+                                <div className="pt-2">
+                                    <Button
+                                        type="submit"
+                                        disabled={busy}
+                                        className="w-full"
+                                    >
+                                        {busy ? "Updating Password..." : "Update Password"}
+                                    </Button>
+                                </div>
+
+                            </form>
+
+                            <div className="text-center mt-6 text-sm">
+                                <Link
+                                    to="/forgot-password"
+                                    className="text-gray-400 hover:text-gray-200 transition-colors"
+                                >
+                                    Request a new reset link
+                                </Link>
+                            </div>
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );
