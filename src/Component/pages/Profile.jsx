@@ -5,6 +5,7 @@ import userService from "../../services/userService";
 import fileService from "../../services/fileService";
 import { Container, PostCard } from "../../Component";
 import { getCached, setCached } from "../../utils/simpleCache";
+import SavedPostsList from "../SavedPostsList";
 
 const FILTERS = [
     { key: "recent", label: "Most Recent" },
@@ -20,6 +21,7 @@ export default function Profile() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState("recent");
+    const [activeTab, setActiveTab] = useState("posts");
 
     const isOwnProfile = currentUser && currentUser.$id === userId;
 
@@ -65,6 +67,10 @@ export default function Profile() {
         };
     }, [userId, activeFilter]);
 
+    useEffect(() => {
+        setActiveTab("posts");
+    }, [userId]);
+
     if (!profile) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
@@ -97,35 +103,58 @@ export default function Profile() {
                     )}
                 </div>
 
-                <h2 className="text-xl font-bold mb-4 text-center">
-                    Posts by {profile.name}
-                </h2>
-
-                <div className="flex justify-center gap-2 sm:gap-3 mb-8 flex-wrap">
-                    {FILTERS.map((filter) => (
-                        <button
-                            key={filter.key}
-                            onClick={() => setActiveFilter(filter.key)}
-                            className={activeFilter === filter.key
-                                ? "px-4 py-2 rounded-full text-sm font-medium transition bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
-                                : "px-4 py-2 rounded-full text-sm font-medium transition bg-white/10 text-gray-300 hover:bg-white/20"
-                            }
-                        >
-                            {filter.label}
-                        </button>
-                    ))}
-                </div>
-
-                {loading ? (
-                    <p className="text-center text-gray-400 animate-pulse">Loading posts...</p>
-                ) : posts.length === 0 ? (
-                    <p className="text-center text-gray-400">No posts yet.</p>
-                ) : (
-                    <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                        {posts.map((post) => (
-                            <PostCard key={post.$id} {...post} />
+                {isOwnProfile && (
+                    <div className="flex justify-center gap-2 sm:gap-3 mb-6">
+                        {[{ key: "posts", label: "My Posts" }, { key: "saved", label: "Saved" }].map((tab) => (
+                            <button
+                                key={tab.key}
+                                onClick={() => setActiveTab(tab.key)}
+                                className={activeTab === tab.key
+                                    ? "px-5 py-2 rounded-lg text-sm font-semibold bg-white/20 text-white border border-white/30"
+                                    : "px-5 py-2 rounded-lg text-sm font-semibold bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10"
+                                }
+                            >
+                                {tab.label}
+                            </button>
                         ))}
                     </div>
+                )}
+
+                {isOwnProfile && activeTab === "saved" ? (
+                    <SavedPostsList />
+                ) : (
+                    <>
+                        <h2 className="text-xl font-bold mb-4 text-center">
+                            Posts by {profile.name}
+                        </h2>
+
+                        <div className="flex justify-center gap-2 sm:gap-3 mb-8 flex-wrap">
+                            {FILTERS.map((filter) => (
+                                <button
+                                    key={filter.key}
+                                    onClick={() => setActiveFilter(filter.key)}
+                                    className={activeFilter === filter.key
+                                        ? "px-4 py-2 rounded-full text-sm font-medium transition bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
+                                        : "px-4 py-2 rounded-full text-sm font-medium transition bg-white/10 text-gray-300 hover:bg-white/20"
+                                    }
+                                >
+                                    {filter.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {loading ? (
+                            <p className="text-center text-gray-400 animate-pulse">Loading posts...</p>
+                        ) : posts.length === 0 ? (
+                            <p className="text-center text-gray-400">No posts yet.</p>
+                        ) : (
+                            <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                {posts.map((post) => (
+                                    <PostCard key={post.$id} {...post} />
+                                ))}
+                            </div>
+                        )}
+                    </>
                 )}
             </Container>
         </div>

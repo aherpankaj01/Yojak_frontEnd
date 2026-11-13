@@ -18,6 +18,7 @@ const Login = lazy(() => import("./Component/Login.jsx"));
 const Search = lazy(() => import("./Component/pages/Search.jsx"));
 const ForgotPassword = lazy(() => import("./Component/pages/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./Component/pages/ResetPassword.jsx"));
+const SavedPosts = lazy(() => import("./Component/pages/SavedPosts.jsx"));
 
 
 const LoadingFallback = () => (
@@ -78,6 +79,16 @@ export const router = createBrowserRouter([
                     <Suspense fallback={<LoadingFallback />}>
                         <AuthLayout authentication>
                             <AllPost />
+                        </AuthLayout>
+                    </Suspense>
+                ),
+            },
+            {
+                path: "/saved",
+                element: (
+                    <Suspense fallback={<LoadingFallback />}>
+                        <AuthLayout authentication>
+                            <SavedPosts />
                         </AuthLayout>
                     </Suspense>
                 ),

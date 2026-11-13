@@ -1,41 +1,54 @@
+
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import authService from "../../services/authService";
 import { logout } from "../../store/authSlice";
 
-const LogoutBtn = () => {
+const LogoutBtn = ({ onLogout }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await authService.logout();
       dispatch(logout());
+      onLogout?.();
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
 
   return (
-    <button
-      onClick={handleLogout}
-      className="
-        relative overflow-hidden
-        px-4 sm:px-5 py-2 sm:py-2.5
-        rounded-full
-        bg-gradient-to-r from-red-500 via-pink-500 to-red-600
-        text-white font-semibold text-xs sm:text-sm
-        shadow-lg shadow-red-500/30
-        transition-all duration-300 ease-in-out
-        hover:scale-105 hover:shadow-red-500/50
-        active:scale-95
-        w-full sm:w-auto
-      "
-    >
-      <span className="absolute inset-0 bg-white/10 blur-xl opacity-0 hover:opacity-100 transition duration-300"></span>
+      <button
+          type="button"
+          onClick={handleLogout}
+          className="
+                flex w-full items-center gap-3
+                rounded-lg px-3 py-3
+                text-sm font-semibold
+                text-red-400
+                transition-all duration-200
+                hover:bg-red-500/10 hover:text-red-300
+                focus:outline-none focus:ring-2 focus:ring-red-400/50
+            "
+      >
+        <svg
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+          <path
+              d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5m5 5H3"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+          />
+        </svg>
 
-      <span className="relative z-10 flex items-center justify-center gap-2">
-        🔓 Logout
-      </span>
-    </button>
+        Logout
+      </button>
   );
 };
 

@@ -7,6 +7,7 @@ import parse, { domToReact } from "html-react-parser";
 import { useSelector } from "react-redux";
 import CommentSection from "../CommentSection";
 import LikeButton from "../LikeButton";
+import BookmarkButton from "../BookmarkButton";
 import { clearCache } from "../../utils/simpleCache";
 
 const parseOptions = {
@@ -217,7 +218,10 @@ export default function Post() {
           </div>
         </div>
          <div className="max-w-3xl mx-auto mb-6">
-                  <LikeButton postSlug={post.slug} />
+           <div className="flex items-center gap-3 flex-wrap">
+             <LikeButton postSlug={post.slug} />
+             <BookmarkButton postSlug={post.slug} />
+           </div>
                 </div>
                 <CommentSection postSlug={post.slug} />
       </Container>
