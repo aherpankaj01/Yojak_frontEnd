@@ -105,7 +105,9 @@ export default function Profile() {
                         </p>
                     )}
 
-                    <FollowButton userId={profileUserId} isOwnProfile={isOwnProfile} />
+
+                    <FollowButton userId={userId} isOwnProfile={isOwnProfile} />
+
                 </div>
 
                 {isOwnProfile && (
