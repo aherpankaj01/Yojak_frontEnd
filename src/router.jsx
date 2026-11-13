@@ -12,7 +12,7 @@ const Post = lazy(() => import("./Component/pages/Post.jsx"));
 const AllPost = lazy(() => import("./Component/pages/AllPost.jsx"));
 const Profile = lazy(() => import("./Component/pages/Profile.jsx"));
 const EditProfile = lazy(() => import("./Component/pages/EditProfile.jsx"));
-
+const VerifyEmail = lazy(() => import("./Component/pages/VerifyEmail.jsx"));
 const AuthLayout = lazy(() => import("./Component/AuthLayout.jsx"));
 const Login = lazy(() => import("./Component/Login.jsx"));
 const Search = lazy(() => import("./Component/pages/Search.jsx"));
@@ -57,6 +57,16 @@ export const router = createBrowserRouter([
                 ),
             },
             { path: "/search", element: withSuspense(Search) },
+            {
+                path: "/verify-email",
+                element: (
+                    <Suspense fallback={<LoadingFallback />}>
+                        <AuthLayout authentication={false}>
+                            <VerifyEmail />
+                        </AuthLayout>
+                    </Suspense>
+                ),
+            },
             {
                 path: "/all-posts",
                 element: (

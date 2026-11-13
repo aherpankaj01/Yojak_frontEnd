@@ -17,15 +17,16 @@ function Signup() {
   const create = async (data) => {
     setError("");
     try {
-      const user = await authService.createAccount(data);
-
-      if (user) {
-        const userData = await authService.getCurrentUser();
-        if (userData) dispatch(login(userData));
-        navigate("/");
-      }
+      const res = await authService.createAccount(data);
+      navigate("/verify-email", {
+        state: {
+          email: res.email,
+          expiresAt: Date.now() + res.expiresInSeconds * 1000,
+          resendAt: Date.now() + res.resendAfterSeconds * 1000,
+        },
+      });
     } catch (error) {
-      setError(error.message);
+      setError(error?.response?.data?.message || error.message);
     }
   };
 

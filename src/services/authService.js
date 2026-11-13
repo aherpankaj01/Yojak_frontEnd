@@ -7,9 +7,27 @@ export class AuthService {
             { name, email, password },
             { silent: true }
         );
-        const { token, userId, name: userName, email: userEmail } = response.data;
+        return response.data;
+    }
+
+    async verifyOtp({ email, otp }) {
+        const response = await apiClient.post(
+            "/auth/verify-otp",
+            { email, otp },
+            { silent: true }
+        );
+        const { token, userId, name, email: userEmail } = response.data;
         localStorage.setItem("yojak_token", token);
-        return { userId, name: userName, email: userEmail };
+        return { userId, name, email: userEmail };
+    }
+
+    async resendOtp(email) {
+        const response = await apiClient.post(
+            "/auth/resend-otp",
+            { email },
+            { silent: true }
+        );
+        return response.data;
     }
 
     async login({ email, password }) {
