@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -93,27 +94,36 @@ export default function Profile() {
                         alt={profile.name}
                         className="w-24 h-24 rounded-full object-cover mb-4 border-4 border-white/20"
                     />
-                    <h1 className="text-2xl sm:text-3xl font-bold">{profile.name}</h1>
+
+                    <h1 className="text-2xl sm:text-3xl font-bold">
+                        {profile.name}
+                    </h1>
+
                     {profile.bio && (
-                        <p className="text-gray-400 mt-2 max-w-md">{profile.bio}</p>
+                        <p className="text-gray-400 mt-2 max-w-md">
+                            {profile.bio}
+                        </p>
                     )}
-                    <FollowButton userId={userId} isOwnProfile={!!isOwnProfile} />
-                    {isOwnProfile && (
-                        <a href="/edit-profile" className="mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition">
-                            Edit Profile
-                        </a>
-                    )}
+
+                    <FollowButton
+                        userId={userId}
+                        isOwnProfile={!!isOwnProfile}
+                    />
                 </div>
 
                 {isOwnProfile && (
                     <div className="flex justify-center gap-2 sm:gap-3 mb-6">
-                        {[{ key: "posts", label: "My Posts" }, { key: "saved", label: "Saved" }].map((tab) => (
+                        {[
+                            { key: "posts", label: "My Posts" },
+                            { key: "saved", label: "Saved" },
+                        ].map((tab) => (
                             <button
                                 key={tab.key}
                                 onClick={() => setActiveTab(tab.key)}
-                                className={activeTab === tab.key
-                                    ? "px-5 py-2 rounded-lg text-sm font-semibold bg-white/20 text-white border border-white/30"
-                                    : "px-5 py-2 rounded-lg text-sm font-semibold bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10"
+                                className={
+                                    activeTab === tab.key
+                                        ? "px-5 py-2 rounded-lg text-sm font-semibold bg-white/20 text-white border border-white/30"
+                                        : "px-5 py-2 rounded-lg text-sm font-semibold bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10"
                                 }
                             >
                                 {tab.label}
@@ -135,9 +145,10 @@ export default function Profile() {
                                 <button
                                     key={filter.key}
                                     onClick={() => setActiveFilter(filter.key)}
-                                    className={activeFilter === filter.key
-                                        ? "px-4 py-2 rounded-full text-sm font-medium transition bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
-                                        : "px-4 py-2 rounded-full text-sm font-medium transition bg-white/10 text-gray-300 hover:bg-white/20"
+                                    className={
+                                        activeFilter === filter.key
+                                            ? "px-4 py-2 rounded-full text-sm font-medium transition bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
+                                            : "px-4 py-2 rounded-full text-sm font-medium transition bg-white/10 text-gray-300 hover:bg-white/20"
                                     }
                                 >
                                     {filter.label}
@@ -146,9 +157,13 @@ export default function Profile() {
                         </div>
 
                         {loading ? (
-                            <p className="text-center text-gray-400 animate-pulse">Loading posts...</p>
+                            <p className="text-center text-gray-400 animate-pulse">
+                                Loading posts...
+                            </p>
                         ) : posts.length === 0 ? (
-                            <p className="text-center text-gray-400">No posts yet.</p>
+                            <p className="text-center text-gray-400">
+                                No posts yet.
+                            </p>
                         ) : (
                             <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                                 {posts.map((post) => (

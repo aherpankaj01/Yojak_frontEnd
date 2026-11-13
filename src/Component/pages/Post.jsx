@@ -9,6 +9,7 @@ import CommentSection from "../CommentSection";
 import LikeButton from "../LikeButton";
 import BookmarkButton from "../BookmarkButton";
 import { clearCache } from "../../utils/simpleCache";
+import FollowButton from "../FollowButton";
 
 const parseOptions = {
   replace(domNode) {
@@ -128,6 +129,29 @@ const parseOptions = {
     }
   },
 };
+const getReadingTime = (content = "") => {
+  const plainText = content
+      .replace(/<[^>]*>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .trim();
+
+  const wordCount = plainText
+      .split(/\s+/)
+      .filter(Boolean).length;
+
+  return Math.max(1, Math.ceil(wordCount / 200));
+};
+
+const formatPostDate = (date) => {
+  if (!date) return "";
+
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -138,6 +162,18 @@ export default function Post() {
 
   const userData = useSelector((state) => state.auth.userData);
   const isAuthor = post && userData ? post.userId === userData.$id : false;
+
+  const authorProfilePath = post?.userId
+      ? `/profile/${post.userId}`
+      : "/";
+
+  const authorAvatar = post?.authorAvatar
+      ? fileService.getFilePreview(post.authorAvatar, "avatar")
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          post?.authorName || "Author"
+      )}&background=6366f1&color=ffffff`;
+
+  const readingTime = getReadingTime(post?.content || "");
 
   useEffect(() => {
     if (!slug) {
@@ -205,17 +241,113 @@ export default function Post() {
         )}
 
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+
+          {/* Post Title */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
             {post.title}
           </h1>
+
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+
+            <div className="flex items-center gap-3">
+
+              <Link
+                  to={authorProfilePath}
+                  className="shrink-0"
+                  aria-label={`View ${post.authorName}'s profile`}
+              >
+                <img
+                    src={authorAvatar}
+                    alt={post.authorName || "Author"}
+                    className="
+                        w-12 h-12 rounded-full object-cover
+                        border-2 border-white/10
+                        transition-all duration-300
+                        hover:border-indigo-400 hover:scale-105
+                    "
+                />
+              </Link>
+
+              <div className="flex flex-col gap-1">
+
+                <div className="flex items-center gap-2 flex-wrap">
+
+                  <Link
+                      to={authorProfilePath}
+                      className="
+                            text-white font-semibold text-sm sm:text-base
+                            hover:text-indigo-400
+                            transition-colors duration-200
+                        "
+                  >
+                    {post.authorName || "Unknown Author"}
+                  </Link>
+
+                  {!isAuthor && (
+                      <FollowButton
+                          userId={post.userId}
+                          isOwnProfile={false}
+                      />
+                  )}
+
+                </div>
+
+                <div className="flex items-center flex-wrap gap-2 text-xs sm:text-sm text-gray-400">
+
+                    <span>
+                        {formatPostDate(post.createdAt)}
+                    </span>
+
+                  <span>·</span>
+
+                  <span>
+                        {readingTime} min read
+                    </span>
+
+                </div>
+              </div>
+            </div>
+
+            {isAuthor && (
+                <div className="flex items-center gap-2">
+
+                  <Link
+                      to={`/edit-post/${post.$id}`}
+                      className="
+                        px-4 py-2 rounded-lg
+                        bg-white/10 hover:bg-white/20
+                        text-white text-sm font-medium
+                        transition
+                    "
+                  >
+                    ✏️ Edit
+                  </Link>
+
+                  <button
+                      onClick={deletePost}
+                      className="
+                        px-4 py-2 rounded-lg
+                        bg-red-500/10 hover:bg-red-500/20
+                        text-red-400 text-sm font-medium
+                        transition
+                    "
+                  >
+                    🗑️ Delete
+                  </button>
+
+                </div>
+            )}
+
+          </div>
 
           <hr className="border-white/10 mb-8" />
 
           <div className="text-gray-300">
             {typeof post.content === "string"
-              ? parse(post.content, parseOptions)
-              : null}
+                ? parse(post.content, parseOptions)
+                : null}
           </div>
+
         </div>
          <div className="max-w-3xl mx-auto mb-6">
            <div className="flex items-center gap-3 flex-wrap">
