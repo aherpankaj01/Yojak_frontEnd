@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Logo from "../Logo";
 import LogoutBtn from "./LogOutBtn";
@@ -13,6 +13,8 @@ const Header = () => {
 
     const [openMenu, setOpenMenu] = useState(null);
     const headerRef = useRef(null);
+    const location = useLocation();
+    const currentPath = location.pathname;
 
     const profilePath = userData?.$id
         ? `/profile/${userData.$id}`

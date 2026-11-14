@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import postService from "../../services/postService";
 import fileService from "../../services/fileService";
@@ -11,6 +11,10 @@ import LikeButton from "../LikeButton";
 import BookmarkButton from "../BookmarkButton";
 import { clearCache } from "../../utils/simpleCache";
 import FollowButton from "../FollowButton";
+import { BookOpen } from "lucide-react";
+
+const ReaderMode = lazy(() => import("../reader/ReaderMode"));
+
 
 const parseOptions = {
     replace(domNode) {
@@ -158,6 +162,7 @@ const formatPostDate = (date) => {
 export default function Post() {
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [readerOpen, setReaderOpen] = useState(false);
 
     const { slug } = useParams();
     const navigate = useNavigate();
@@ -264,6 +269,13 @@ className="w-12 h-12 rounded-full object-cover border-2 border-white/10 hover:bo
 </div>
 
 <div className="flex items-center gap-3 shrink-0">
+    <button
+        type="button"
+        onClick={() => setReaderOpen(true)}
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 text-sm font-medium transition"
+    >
+        <BookOpen size={16} /> Reading mode
+    </button>
   {!isAuthor && (
       <FollowButton userId={post.userId} isOwnProfile={false} showCounts={false} />
   )}
@@ -305,6 +317,19 @@ className="w-12 h-12 rounded-full object-cover border-2 border-white/10 hover:bo
 </div>
 
 <CommentSection postSlug={post.slug} />
+                {readerOpen && (
+                    <Suspense fallback={null}>
+                        <ReaderMode
+                            title={post.title}
+                            content={post.content}
+                            authorName={post.authorName}
+                            dateLabel={formatPostDate(post.createdAt)}
+                            readingTime={readingTime}
+                            coverImage={post.featuredImage ? fileService.getFileView(post.featuredImage) : null}
+                            onClose={() => setReaderOpen(false)}
+                        />
+                    </Suspense>
+                )}
 </Container>
 </div>
 ) : null;
