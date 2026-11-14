@@ -1,6 +1,5 @@
-
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Logo from "../Logo";
 import LogoutBtn from "./LogOutBtn";
@@ -58,10 +57,21 @@ const Header = () => {
         whitespace-nowrap
         rounded-full px-4 py-2.5
         text-sm sm:text-base font-semibold
-        text-gray-200
         transition-all duration-200
-        hover:bg-white/10 hover:text-white
     `;
+
+    const activeNavButtonClass = `
+        bg-gradient-to-r from-purple-600 to-indigo-600
+        text-white
+        shadow-lg shadow-purple-900/30
+    `;
+
+    const getNavClass = (path) =>
+        `${navButtonClass} ${
+            currentPath === path
+                ? activeNavButtonClass
+                : "bg-transparent text-gray-200 hover:bg-white/10 hover:text-white"
+        }`;
 
     const dropdownClass = `
         absolute right-0 top-full mt-3
@@ -90,8 +100,6 @@ const Header = () => {
         >
             <div className="w-full px-4 sm:px-6 lg:px-8">
                 <nav className="relative flex flex-wrap items-center gap-x-6 gap-y-4 py-4 xl:flex-nowrap">
-
-
                     <Link
                         to="/"
                         onClick={closeMenu}
@@ -103,25 +111,23 @@ const Header = () => {
                         </span>
                     </Link>
 
-
                     <div
                         className="
-                               w-full sm:max-w-[30rem]
-                               xl:absolute xl:left-1/2 xl:top-1/2
-                               xl:w-[30rem] xl:max-w-none
-                               xl:-translate-x-1/2 xl:-translate-y-1/2"
+                            w-full sm:max-w-[30rem]
+                            xl:absolute xl:left-1/2 xl:top-1/2
+                            xl:w-[30rem] xl:max-w-none
+                            xl:-translate-x-1/2 xl:-translate-y-1/2
+                        "
                     >
                         <SearchBar />
                     </div>
 
-
                     <ul className="ml-auto flex w-full flex-wrap items-center justify-center gap-2 sm:w-auto sm:justify-end sm:gap-3 xl:mr-8 xl:shrink-0">
-
                         <li>
                             <Link
                                 to="/"
                                 onClick={closeMenu}
-                                className={navButtonClass}
+                                className={getNavClass("/")}
                             >
                                 Home
                             </Link>
@@ -132,13 +138,18 @@ const Header = () => {
                                 <li>
                                     <NotificationBell />
                                 </li>
+
                                 <li className="relative">
                                     <button
                                         type="button"
                                         onClick={() => toggleMenu("posts")}
                                         aria-expanded={openMenu === "posts"}
                                         aria-haspopup="true"
-                                        className={navButtonClass}
+                                        className={`${navButtonClass} ${
+                                            ["/all-posts", "/add-post", "/saved"].includes(currentPath)
+                                                ? activeNavButtonClass
+                                                : "bg-transparent text-gray-200 hover:bg-white/10 hover:text-white"
+                                        }`}
                                     >
                                         Posts
                                         <svg
@@ -200,14 +211,18 @@ const Header = () => {
                                     )}
                                 </li>
 
-
                                 <li className="relative">
                                     <button
                                         type="button"
                                         onClick={() => toggleMenu("profile")}
                                         aria-expanded={openMenu === "profile"}
                                         aria-haspopup="true"
-                                        className={navButtonClass}
+                                        className={`${navButtonClass} ${
+                                            currentPath.startsWith("/profile") ||
+                                            currentPath === "/edit-profile"
+                                                ? activeNavButtonClass
+                                                : "bg-transparent text-gray-200 hover:bg-white/10 hover:text-white"
+                                        }`}
                                     >
                                         My Profile
                                         <svg
@@ -275,7 +290,7 @@ const Header = () => {
                                     <Link
                                         to="/login"
                                         onClick={closeMenu}
-                                        className={navButtonClass}
+                                        className={getNavClass("/login")}
                                     >
                                         Login
                                     </Link>
@@ -285,22 +300,13 @@ const Header = () => {
                                     <Link
                                         to="/signup"
                                         onClick={closeMenu}
-                                        className="
-                                            whitespace-nowrap rounded-full
-                                            bg-gradient-to-r from-purple-600 to-indigo-600
-                                            px-5 py-2.5 text-sm sm:text-base
-                                            font-semibold text-white
-                                            shadow-lg shadow-purple-900/30
-                                            transition-all duration-300
-                                            hover:scale-105 hover:shadow-purple-500/30
-                                        "
+                                        className={getNavClass("/signup")}
                                     >
                                         Sign Up
                                     </Link>
                                 </li>
                             </>
                         )}
-
                     </ul>
                 </nav>
             </div>
