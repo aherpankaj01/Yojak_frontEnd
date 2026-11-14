@@ -4,7 +4,7 @@ import parse, { domToReact } from "html-react-parser";
 import { X, Type, List, Clock, ArrowUp } from "lucide-react";
 import { setPref, resetPrefs } from "../../store/readerSlice";
 import { THEMES, LIMITS, buildCssVars } from "./readerConfig";
-import ReaderSettingsPanel from "./ReaderSettingsPanel";
+import ReaderSettingsPanel from "./Readersettingspanel";
 import ReaderTOC from "./ReaderTOC";
 import "./reader.css";
 
