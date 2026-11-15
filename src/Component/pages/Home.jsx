@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import postService from "../../services/postService";
 import { Container, PostCard } from "../../Component";
 import { getCached, setCached } from "../../utils/simpleCache";
@@ -8,6 +9,18 @@ const FILTERS = [
     { key: "most_liked", label: "Most Liked" },
     { key: "most_commented", label: "Most Commented" },
 ];
+
+function SkeletonCard() {
+    return (
+        <div className="animate-pulse overflow-hidden rounded-xl bg-white/5">
+            <div className="aspect-[4/3] w-full bg-white/10" />
+            <div className="space-y-3 p-4">
+                <div className="h-4 w-4/5 rounded bg-white/10" />
+                <div className="h-3 w-1/3 rounded bg-white/10" />
+            </div>
+        </div>
+    );
+}
 
 function Home() {
     const [posts, setPosts] = useState([]);
@@ -20,7 +33,6 @@ function Home() {
         const cached = getCached(cacheKey);
 
         if (cached) {
-
             setPosts(cached.data);
             setLoading(false);
 
@@ -37,7 +49,6 @@ function Home() {
                 cancelled = true;
             };
         }
-
 
         setLoading(true);
         postService
@@ -59,27 +70,30 @@ function Home() {
     }, [activeFilter]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-6 sm:py-8 md:py-10 px-3 sm:px-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-3 py-10 text-white sm:px-4 sm:py-14">
             <Container>
-                <div className="mb-8 sm:mb-10 text-center">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3">
-                        Explore Posts ✨
+                <header className="mb-10 text-center">
+                    <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+                        Explore{" "}
+                        <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                            Posts
+                        </span>
                     </h1>
-                    <p className="text-gray-400 text-sm sm:text-base">
+                    <p className="mt-3 text-sm text-gray-400 sm:text-base">
                         Discover amazing content created by users
                     </p>
-                </div>
+                </header>
 
-                <div className="flex justify-center gap-2 sm:gap-3 mb-8 flex-wrap">
+                <div className="mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                     {FILTERS.map((filter) => (
                         <button
                             key={filter.key}
                             onClick={() => setActiveFilter(filter.key)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition
-                                ${activeFilter === filter.key
+                            className={`rounded-full px-5 py-2 text-sm font-medium transition ${
+                                activeFilter === filter.key
                                     ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
-                                    : "bg-white/10 text-gray-300 hover:bg-white/20"
-                                }`}
+                                    : "border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10"
+                            }`}
                         >
                             {filter.label}
                         </button>
@@ -87,26 +101,37 @@ function Home() {
                 </div>
 
                 {loading ? (
-                    <div className="text-center py-10">
-                        <p className="animate-pulse text-base sm:text-lg">
-                            Loading posts...
-                        </p>
+                    <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <SkeletonCard key={i} />
+                        ))}
                     </div>
                 ) : posts.length === 0 ? (
-                    <div className="text-center py-10">
-                        <h2 className="text-xl sm:text-2xl font-bold mb-2">
-                            No posts available 🚀
+                    <div className="py-12 text-center">
+                        <h2 className="mb-2 text-xl font-bold sm:text-2xl">
+                            No posts available
                         </h2>
-                        <p className="text-gray-400 text-sm sm:text-base">
+                        <p className="text-sm text-gray-400 sm:text-base">
                             Login and create your first post!
                         </p>
                     </div>
                 ) : (
-                    <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                        {posts.map((post) => (
-                            <PostCard key={post.$id} {...post} />
-                        ))}
-                    </div>
+                    <>
+                        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+                            {posts.map((post) => (
+                                <PostCard key={post.$id} {...post} />
+                            ))}
+                        </div>
+
+                        <div className="mt-10 text-center">
+                            <Link
+                                to="/all-posts"
+                                className="inline-block rounded-full border border-white/15 bg-white/5 px-6 py-2.5 text-sm font-semibold text-gray-200 transition hover:bg-white/10 hover:text-white"
+                            >
+                                View all posts →
+                            </Link>
+                        </div>
+                    </>
                 )}
             </Container>
         </div>

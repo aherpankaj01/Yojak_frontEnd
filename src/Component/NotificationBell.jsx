@@ -49,6 +49,8 @@ export default function NotificationBell() {
     const [loading, setLoading] = useState(false);
     const wrapperRef = useRef(null);
 
+    const badgeText = unread > 99 ? "99+" : String(unread);
+
     const refreshCount = useCallback(async () => {
         const count = await notificationService.getUnreadCount();
         if (count !== null) setUnread(count);
@@ -109,18 +111,16 @@ export default function NotificationBell() {
 
     const handleItemClick = async (n) => {
         setOpen(false);
-        if (!n.read) {
-            setItems((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
-            setUnread((c) => Math.max(0, c - 1));
-            notificationService.markRead(n.id);
-        }
+        setItems((prev) => prev.filter((x) => x.id !== n.id));
+        setUnread((c) => Math.max(0, c - 1));
+        notificationService.markRead(n.id);
         navigate(getLink(n));
     };
 
     const handleMarkAll = async () => {
         const ok = await notificationService.markAllRead();
         if (ok) {
-            setItems((prev) => prev.map((x) => ({ ...x, read: true })));
+            setItems([]);
             setUnread(0);
         }
     };
@@ -132,7 +132,7 @@ export default function NotificationBell() {
             <button
                 type="button"
                 onClick={toggleOpen}
-                aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`}
+                aria-label={`Notifications${unread ? `, ${badgeText} unread` : ""}`}
                 aria-expanded={open}
                 aria-haspopup="true"
                 className="relative flex items-center rounded-full p-2.5 text-gray-200 transition-all duration-200 hover:bg-white/10 hover:text-white"
@@ -148,7 +148,7 @@ export default function NotificationBell() {
 
                 {unread > 0 && (
                     <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold leading-none text-white shadow">
-                        {unread > 99 ? "99+" : unread}
+                        {badgeText}
                     </span>
                 )}
             </button>
@@ -175,7 +175,7 @@ export default function NotificationBell() {
                             </p>
                         ) : items.length === 0 ? (
                             <p className="px-4 py-8 text-center text-sm text-gray-400">
-                                No notifications yet.
+                                You're all caught up.
                             </p>
                         ) : (
                             items.map((n) => {
@@ -188,9 +188,7 @@ export default function NotificationBell() {
                                         key={n.id}
                                         type="button"
                                         onClick={() => handleItemClick(n)}
-                                        className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-white/10 ${
-                                            n.read ? "" : "bg-indigo-500/10"
-                                        }`}
+                                        className="flex w-full items-start gap-3 bg-indigo-500/10 px-4 py-3 text-left transition-colors hover:bg-white/10"
                                     >
                                         <img
                                             src={avatarUrl}
@@ -207,14 +205,18 @@ export default function NotificationBell() {
                                             </p>
                                             <p className="mt-0.5 text-xs text-gray-500">{timeAgo(n.createdAt)}</p>
                                         </div>
-                                        {!n.read && (
-                                            <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-indigo-400" />
-                                        )}
+                                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-indigo-400" />
                                     </button>
                                 );
                             })
                         )}
                     </div>
+
+                    {items.length > 0 && unread > items.length && (
+                        <p className="border-t border-white/10 px-4 py-2 text-center text-xs text-gray-500">
+                            Showing your latest {items.length} unread notifications
+                        </p>
+                    )}
                 </div>
             )}
         </div>

@@ -1,24 +1,38 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Container, PostForm } from "../../Component";
 
 function AddPost() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-6 sm:py-8 md:py-10 px-3 sm:px-4">
-      <Container>
-        <div className="mb-6 sm:mb-8 text-center text-white">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-            Create New Post ✍️
-          </h1>
-          <p className="text-gray-400 text-sm sm:text-base">
-            Share your thoughts with the world
-          </p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-3 py-8 text-white sm:px-4 sm:py-12">
+        <Container>
+          <div className="mx-auto max-w-6xl">
+            <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-sm text-gray-400 transition hover:text-white"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="m15 6-6 6 6 6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Back to home
+            </Link>
 
-        <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 md:p-10">
-          <PostForm />
-        </div>
-      </Container>
-    </div>
+            <div className="mb-8 mt-4 flex items-center gap-3">
+              <span className="h-10 w-1.5 rounded-full bg-gradient-to-b from-purple-500 to-indigo-500" />
+              <div>
+                <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                  Create New Post
+                </h1>
+                <p className="mt-1 text-sm text-gray-400">
+                  Share your thoughts with the world.
+                </p>
+              </div>
+            </div>
+
+            <PostForm />
+          </div>
+        </Container>
+      </div>
   );
 }
 

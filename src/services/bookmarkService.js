@@ -39,6 +39,25 @@ export class BookmarkService {
             return null;
         }
     }
+
+    async getSavedPostsPaged(page = 0, size = 8) {
+        try {
+            const response = await apiClient.get(`/bookmarks/paged?page=${page}&size=${size}`);
+            const data = response.data;
+            return {
+                documents: data.content.map((post) => ({ ...post, $id: post.slug })),
+                page: data.page,
+                size: data.size,
+                totalElements: data.totalElements,
+                totalPages: data.totalPages,
+                hasNext: data.hasNext,
+                hasPrevious: data.hasPrevious,
+            };
+        } catch (error) {
+            console.log("Bookmark service :: getSavedPostsPaged :: error", error);
+            return null;
+        }
+    }
 }
 
 const bookmarkService = new BookmarkService();
