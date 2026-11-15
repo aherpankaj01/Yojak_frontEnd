@@ -45,16 +45,39 @@ export class PostService {
         }
     }
 
-    async getPosts(status = "active", sortBy = "recent") {
-            try {
-           const response = await apiClient.get(`/posts?status=${status}&sortBy=${sortBy}`);
-                const documents = response.data.map(this.toAppwriteShape);
-                return { documents };
-            } catch (error) {
-                console.log("Post service :: getPosts :: error", error);
-                return false;
-            }
+    async getPosts(status = "active", sortBy = "recent", limit = null) {
+        try {
+            let url = `/posts?status=${status}&sortBy=${sortBy}`;
+            if (limit) url += `&limit=${limit}`;
+            const response = await apiClient.get(url);
+            const documents = response.data.map(this.toAppwriteShape);
+            return { documents };
+        } catch (error) {
+            console.log("Post service :: getPosts :: error", error);
+            return false;
         }
+    }
+
+    async getPostsPaged(page = 0, size = 8, status = "active") {
+        try {
+            const response = await apiClient.get(
+                `/posts/paged?status=${status}&page=${page}&size=${size}`
+            );
+            const data = response.data;
+            return {
+                documents: data.content.map(this.toAppwriteShape),
+                page: data.page,
+                size: data.size,
+                totalElements: data.totalElements,
+                totalPages: data.totalPages,
+                hasNext: data.hasNext,
+                hasPrevious: data.hasPrevious,
+            };
+        } catch (error) {
+            console.log("Post service :: getPostsPaged :: error", error);
+            return false;
+        }
+    }
 
     toAppwriteShape(post) {
         return { ...post, $id: post.slug };

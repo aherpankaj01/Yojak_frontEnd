@@ -25,7 +25,7 @@ function Home() {
             setLoading(false);
 
             if (cached.isExpired) {
-                postService.getPosts("active", activeFilter).then((res) => {
+                postService.getPosts("active", activeFilter, 8).then((res) => {
                     if (!cancelled && res) {
                         setPosts(res.documents);
                         setCached(cacheKey, res.documents);
@@ -41,7 +41,7 @@ function Home() {
 
         setLoading(true);
         postService
-            .getPosts("active", activeFilter)
+            .getPosts("active", activeFilter, 8)
             .then((res) => {
                 if (cancelled) return;
                 if (res) {
