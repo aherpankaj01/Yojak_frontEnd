@@ -1,13 +1,13 @@
+
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import followService from "../services/followService";
 
 export default function FollowButton({
-                                         userId,
-                                         isOwnProfile,
-                                         showCounts = true,
-                                         onStatusChange,
-                                     }) {
+    userId,
+    isOwnProfile,
+    showCounts = true,
+}) {
     const userData = useSelector((state) => state.auth.userData);
 
     const [status, setStatus] = useState({
@@ -24,7 +24,6 @@ export default function FollowButton({
         followService.getStatus(userId).then((result) => {
             if (!cancelled && result) {
                 setStatus(result);
-                if (onStatusChange) onStatusChange(result);
             }
         });
 
@@ -45,7 +44,6 @@ export default function FollowButton({
 
             if (result) {
                 setStatus(result);
-                if (onStatusChange) onStatusChange(result);
             }
         } finally {
             setBusy(false);
@@ -75,8 +73,8 @@ export default function FollowButton({
                     disabled={busy}
                     className={
                         status.following
-                            ? "px-7 py-2.5 rounded-full text-sm font-semibold bg-white/10 text-gray-200 border border-white/20 hover:bg-white/20 transition disabled:opacity-50"
-                            : "px-7 py-2.5 rounded-full text-sm font-semibold bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-900/40 hover:from-purple-400 hover:to-indigo-400 transition disabled:opacity-50"
+                            ? "px-5 py-2 rounded-full text-sm font-semibold bg-white/10 text-gray-200 border border-white/20 hover:bg-white/20 disabled:opacity-50"
+                            : "px-5 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-purple-500 to-indigo-500 text-white disabled:opacity-50"
                     }
                 >
                     {busy ? "..." : status.following ? "Following" : "Follow"}
