@@ -1,4 +1,3 @@
-
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import postService from "../../services/postService";
@@ -11,10 +10,9 @@ import LikeButton from "../LikeButton";
 import BookmarkButton from "../BookmarkButton";
 import { clearCache } from "../../utils/simpleCache";
 import FollowButton from "../FollowButton";
-import { BookOpen } from "lucide-react";
+import { BookOpen, MessageCircle } from "lucide-react";
 
 const ReaderMode = lazy(() => import("../reader/ReaderMode"));
-
 
 const parseOptions = {
     replace(domNode) {
@@ -98,7 +96,7 @@ const parseOptions = {
                 );
             case "blockquote":
                 return (
-                    <blockquote className="border-l-4 border-blue-500 pl-5 py-1 my-6 bg-white/5 rounded-r-lg italic text-gray-300 text-lg">
+                    <blockquote className="border-l-4 border-indigo-500 pl-5 py-1 my-6 bg-white/5 rounded-r-lg italic text-gray-300 text-lg">
                         {children}
                     </blockquote>
                 );
@@ -121,7 +119,7 @@ const parseOptions = {
                     <img
                         src={src}
                         alt={alt}
-                        className="rounded-xl w-full my-6 shadow-lg"
+                        className="mx-auto my-6 h-auto max-w-full rounded-xl border border-white/10 shadow-lg"
                     />
                 );
             }
@@ -163,6 +161,7 @@ export default function Post() {
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [readerOpen, setReaderOpen] = useState(false);
+    const [commentCount, setCommentCount] = useState(null);
 
     const { slug } = useParams();
     const navigate = useNavigate();
@@ -177,8 +176,8 @@ export default function Post() {
     const authorAvatar = post?.authorAvatar
         ? fileService.getFilePreview(post.authorAvatar, "avatar")
         : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-    post?.authorName || "Author"
-)}&background=6366f1&color=ffffff`;
+            post?.authorName || "Author"
+        )}&background=6366f1&color=ffffff`;
 
     const readingTime = getReadingTime(post?.content || "");
 
@@ -187,6 +186,8 @@ export default function Post() {
             navigate("/");
             return;
         }
+
+        setCommentCount(null);
 
         postService
             .getPost(slug)
@@ -211,6 +212,11 @@ export default function Post() {
         }
     };
 
+    const scrollToComments = () => {
+        const target = document.getElementById("comments");
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
@@ -219,104 +225,129 @@ export default function Post() {
         );
     }
 
-    return post ? (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-8 sm:py-12">
+    if (!post) return null;
+
+    const shownComments = commentCount ?? post.commentCount ?? 0;
+    const coverUrl = post.featuredImage ? fileService.getFileView(post.featuredImage) : null;
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-8 sm:py-12 px-3 sm:px-4">
             <Container>
-                {post.featuredImage && (
-                    <div className="relative w-full mb-8 rounded-2xl overflow-hidden shadow-2xl">
-                        <img
-                            src={fileService.getFileView(post.featuredImage)}
-                            alt={post.title}
-                            className="w-full h-64 sm:h-80 md:h-[28rem] object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent" />
+                <div className="mx-auto max-w-4xl">
+                    {coverUrl && (
+                        <div className="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-gray-900 shadow-2xl shadow-black/40">
+                            <img
+                                src={coverUrl}
+                                alt=""
+                                aria-hidden="true"
+                                className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-2xl"
+                            />
+                            <img
+                                src={coverUrl}
+                                alt={post.title}
+                                className="relative mx-auto block max-h-[32rem] w-auto max-w-full object-contain"
+                            />
+                        </div>
+                    )}
+
+                    <div className="mx-auto max-w-3xl">
+                        <h1 className="mb-6 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+                            {post.title}
+                        </h1>
+
+                        <div className="mb-10 flex flex-wrap items-center justify-between gap-4 border-y border-white/10 py-5">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <Link
+                                    to={authorProfilePath}
+                                    className="shrink-0"
+                                    aria-label={`View ${post.authorName}'s profile`}
+                                >
+                                    <img
+                                        src={authorAvatar}
+                                        alt={post.authorName || "Author"}
+                                        className="h-12 w-12 rounded-full border-2 border-white/10 object-cover transition-all duration-300 hover:border-indigo-400"
+                                    />
+                                </Link>
+
+                                <div className="flex min-w-0 flex-col gap-0.5">
+                                    <Link
+                                        to={authorProfilePath}
+                                        className="truncate text-sm font-semibold text-white transition-colors hover:text-indigo-400 sm:text-base"
+                                    >
+                                        {post.authorName || "Unknown Author"}
+                                    </Link>
+
+                                    <div className="flex flex-wrap items-center gap-2 text-xs text-gray-400 sm:text-sm">
+                                        <span>{formatPostDate(post.createdAt)}</span>
+                                        <span>·</span>
+                                        <span>{readingTime} min read</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex shrink-0 flex-wrap items-center gap-2 sm:gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setReaderOpen(true)}
+                                    className="inline-flex items-center gap-2 rounded-full bg-indigo-500/15 px-4 py-2 text-sm font-medium text-indigo-300 transition hover:bg-indigo-500/25"
+                                >
+                                    <BookOpen size={16} /> Reading mode
+                                </button>
+
+                                {!isAuthor && (
+                                    <FollowButton userId={post.userId} isOwnProfile={false} showCounts={false} />
+                                )}
+
+                                {isAuthor && (
+                                    <>
+                                        <Link
+                                            to={`/edit-post/${post.$id}`}
+                                            className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
+                                        >
+                                            Edit
+                                        </Link>
+
+                                        <button
+                                            onClick={deletePost}
+                                            className="rounded-full bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/20"
+                                        >
+                                            Delete
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="text-gray-300">
+                            {typeof post.content === "string"
+                                ? parse(post.content, parseOptions)
+                                : null}
+                        </div>
+
+                        <div className="mt-12 flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4">
+                            <LikeButton postSlug={post.slug} />
+
+                            <button
+                                type="button"
+                                onClick={scrollToComments}
+                                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-white/10 hover:text-white active:scale-95"
+                            >
+                                <MessageCircle size={18} />
+                                <span>{shownComments}</span>
+                                <span className="hidden sm:inline">
+                                    {shownComments === 1 ? "Comment" : "Comments"}
+                                </span>
+                            </button>
+
+                            <div className="ml-auto">
+                                <BookmarkButton postSlug={post.slug} />
+                            </div>
+                        </div>
                     </div>
-                )}
 
-                <div className="max-w-3xl mx-auto">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                        {post.title}
-                    </h1>
+                    <CommentSection postSlug={post.slug} onCountChange={setCommentCount} />
+                </div>
 
-                    <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
-                        <div className="flex items-center gap-3 min-w-0">
-                            <Link
-                                to={authorProfilePath}
-                                className="shrink-0"
-                                aria-label={`View ${post.authorName}'s profile`}
->
-<img
-src={authorAvatar}
-alt={post.authorName || "Author"}
-className="w-12 h-12 rounded-full object-cover border-2 border-white/10 hover:border-indigo-400 transition-all duration-300"
-    />
-    </Link>
-
-<div className="flex flex-col gap-1 min-w-0">
-  <Link
-      to={authorProfilePath}
-      className="text-white font-semibold text-sm sm:text-base hover:text-indigo-400 transition-colors truncate"
-  >
-    {post.authorName || "Unknown Author"}
-  </Link>
-
-  <div className="flex items-center flex-wrap gap-2 text-xs sm:text-sm text-gray-400">
-    <span>{formatPostDate(post.createdAt)}</span>
-    <span>·</span>
-    <span>{readingTime} min read</span>
-  </div>
-</div>
-</div>
-
-<div className="flex items-center gap-3 shrink-0">
-    <button
-        type="button"
-        onClick={() => setReaderOpen(true)}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 text-sm font-medium transition"
-    >
-        <BookOpen size={16} /> Reading mode
-    </button>
-  {!isAuthor && (
-      <FollowButton userId={post.userId} isOwnProfile={false} showCounts={false} />
-  )}
-
-  {isAuthor && (
-      <>
-        <Link
-            to={`/edit-post/${post.$id}`}
-            className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition"
-        >
-          ✏️ Edit
-        </Link>
-
-        <button
-            onClick={deletePost}
-            className="px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm font-medium transition"
-        >
-          🗑️ Delete
-        </button>
-      </>
-  )}
-</div>
-</div>
-
-<hr className="border-white/10 mb-8" />
-
-<div className="text-gray-300">
-  {typeof post.content === "string"
-      ? parse(post.content, parseOptions)
-      : null}
-</div>
-</div>
-
-<div className="max-w-3xl mx-auto mb-6">
-  <div className="flex items-center gap-3 flex-wrap">
-    <LikeButton postSlug={post.slug} />
-    <BookmarkButton postSlug={post.slug} />
-  </div>
-</div>
-
-<CommentSection postSlug={post.slug} />
                 {readerOpen && (
                     <Suspense fallback={null}>
                         <ReaderMode
@@ -325,12 +356,12 @@ className="w-12 h-12 rounded-full object-cover border-2 border-white/10 hover:bo
                             authorName={post.authorName}
                             dateLabel={formatPostDate(post.createdAt)}
                             readingTime={readingTime}
-                            coverImage={post.featuredImage ? fileService.getFileView(post.featuredImage) : null}
+                            coverImage={coverUrl}
                             onClose={() => setReaderOpen(false)}
                         />
                     </Suspense>
                 )}
-</Container>
-</div>
-) : null;
+            </Container>
+        </div>
+    );
 }

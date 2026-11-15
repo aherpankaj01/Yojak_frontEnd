@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Heart } from "lucide-react";
 import likeService from "../services/likeService";
 
 export default function LikeButton({ postSlug }) {
@@ -38,22 +39,27 @@ export default function LikeButton({ postSlug }) {
         setBusy(false);
     };
 
-    if (loading) return null;
+    if (loading) {
+        return <div className="h-11 w-20 animate-pulse rounded-full bg-white/10" />;
+    }
 
     return (
         <button
             onClick={handleToggle}
             disabled={!userData || busy}
-            title={!userData ? "Log in to like this post" : ""}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition
-                ${liked
-                    ? "bg-pink-500/20 text-pink-400 border border-pink-500/40"
-                    : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
-                }
-                ${!userData ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-            `}
+            aria-pressed={liked}
+            title={!userData ? "Log in to like this post" : liked ? "Unlike" : "Like"}
+            className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition active:scale-95 ${
+                liked
+                    ? "border-pink-500/40 bg-pink-500/15 text-pink-300"
+                    : "border-white/15 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white"
+            } ${!userData ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
         >
-            <span>{liked ? "❤️" : "🤍"}</span>
+            <Heart
+                size={18}
+                className={liked ? "text-pink-500" : ""}
+                fill={liked ? "currentColor" : "none"}
+            />
             <span>{count}</span>
         </button>
     );

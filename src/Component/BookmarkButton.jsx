@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Bookmark } from "lucide-react";
 import bookmarkService from "../services/bookmarkService";
 
 export default function BookmarkButton({ postSlug }) {
@@ -42,22 +43,27 @@ export default function BookmarkButton({ postSlug }) {
         setBusy(false);
     };
 
-    if (loading) return null;
+    if (loading) {
+        return <div className="h-11 w-24 animate-pulse rounded-full bg-white/10" />;
+    }
 
     return (
         <button
             onClick={handleToggle}
             disabled={!userData || busy}
+            aria-pressed={bookmarked}
             title={!userData ? "Log in to save this post" : bookmarked ? "Remove from saved" : "Save for later"}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition
-                ${bookmarked
-                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40"
-                : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
-            }
-                ${!userData ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-            `}
+            className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition active:scale-95 ${
+                bookmarked
+                    ? "border-indigo-500/40 bg-indigo-500/15 text-indigo-300"
+                    : "border-white/15 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white"
+            } ${!userData ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
         >
-            <span>{bookmarked ? "🔖" : "📑"}</span>
+            <Bookmark
+                size={18}
+                className={bookmarked ? "text-indigo-400" : ""}
+                fill={bookmarked ? "currentColor" : "none"}
+            />
             <span>{bookmarked ? "Saved" : "Save"}</span>
         </button>
     );
