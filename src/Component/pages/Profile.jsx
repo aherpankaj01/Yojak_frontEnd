@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import userService from "../../services/userService";
+import followService from "../../services/followService";
 import fileService from "../../services/fileService";
 import { Container, PostCard } from "../../Component";
 import { getCached, setCached } from "../../utils/simpleCache";
-import FollowButton from "../FollowButton";
 
 const FILTERS = [
     { key: "recent", label: "Most Recent" },
@@ -16,6 +16,12 @@ const FILTERS = [
 const bannerStyle = {
     background:
         "radial-gradient(60% 120% at 10% 0%, rgba(168,85,247,0.9), transparent 60%), radial-gradient(50% 120% at 90% 10%, rgba(99,102,241,0.85), transparent 60%), radial-gradient(60% 140% at 55% 120%, rgba(236,72,153,0.55), transparent 60%), #111827",
+};
+
+const EMPTY_FOLLOW_STATUS = {
+    followersCount: 0,
+    followingCount: 0,
+    following: false,
 };
 
 function Stat({ label, value }) {
@@ -39,20 +45,30 @@ export default function Profile() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState("recent");
-    const [followStats, setFollowStats] = useState({
-        followersCount: 0,
-        followingCount: 0,
-    });
+    const [followStatus, setFollowStatus] = useState(EMPTY_FOLLOW_STATUS);
+    const [followBusy, setFollowBusy] = useState(false);
 
     const isOwnProfile = Boolean(currentUser && currentUser.$id === userId);
 
     useEffect(() => {
         setProfile(null);
-        setFollowStats({ followersCount: 0, followingCount: 0 });
         userService.getPublicProfile(userId).then((data) => {
             if (data) setProfile(data);
         });
     }, [userId]);
+
+    useEffect(() => {
+        let cancelled = false;
+        setFollowStatus(EMPTY_FOLLOW_STATUS);
+
+        followService.getStatus(userId).then((result) => {
+            if (!cancelled && result) setFollowStatus(result);
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [userId, currentUser?.$id]);
 
     useEffect(() => {
         let cancelled = false;
@@ -90,11 +106,19 @@ export default function Profile() {
         };
     }, [userId, activeFilter]);
 
-    const handleFollowStatus = (status) => {
-        setFollowStats({
-            followersCount: status.followersCount,
-            followingCount: status.followingCount,
-        });
+    const handleToggleFollow = async () => {
+        if (followBusy) return;
+        setFollowBusy(true);
+
+        try {
+            const result = followStatus.following
+                ? await followService.unfollow(userId)
+                : await followService.follow(userId);
+
+            if (result) setFollowStatus(result);
+        } finally {
+            setFollowBusy(false);
+        }
     };
 
     if (!profile) {
@@ -159,12 +183,25 @@ export default function Profile() {
                                             Edit Profile
                                         </Link>
                                     )}
-                                    <FollowButton
-                                        userId={userId}
-                                        isOwnProfile={isOwnProfile}
-                                        showCounts={false}
-                                        onStatusChange={handleFollowStatus}
-                                    />
+
+                                    {currentUser && !isOwnProfile && (
+                                        <button
+                                            type="button"
+                                            onClick={handleToggleFollow}
+                                            disabled={followBusy}
+                                            className={
+                                                followStatus.following
+                                                    ? "rounded-full border border-white/20 bg-white/10 px-7 py-2.5 text-sm font-semibold text-gray-200 transition hover:bg-white/20 disabled:opacity-50"
+                                                    : "rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 px-7 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/40 transition hover:from-purple-400 hover:to-indigo-400 disabled:opacity-50"
+                                            }
+                                        >
+                                            {followBusy
+                                                ? "..."
+                                                : followStatus.following
+                                                    ? "Following"
+                                                    : "Follow"}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -183,8 +220,8 @@ export default function Profile() {
 
                         <div className="flex divide-x divide-white/10 border-t border-white/10 bg-black/20">
                             <Stat label="Posts" value={postsCount} />
-                            <Stat label="Followers" value={followStats.followersCount} />
-                            <Stat label="Following" value={followStats.followingCount} />
+                            <Stat label="Followers" value={followStatus.followersCount} />
+                            <Stat label="Following" value={followStatus.followingCount} />
                         </div>
                     </div>
 
